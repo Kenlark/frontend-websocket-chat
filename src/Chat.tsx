@@ -13,7 +13,9 @@ interface Message {
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [user, setUser] = useState<string>("");
-  const [input, setInput] = useState<string>("");
+  const [userInput, setUserInput] = useState<string>("");
+  const [messageInput, setMessageInput] = useState<string>("");
+  const [isAdmin, setIsAdmin] = useState<boolean>(true);
 
   // Configuration des écouteurs d'événements socket
   useEffect(() => {
@@ -26,21 +28,25 @@ export default function Chat() {
       setMessages((prev) => [...prev, msg]);
     });
 
+    socket.on("adminStatus", (status: boolean) => {
+      setIsAdmin(status);
+    });
+
     // Fonction de nettoyage : supprime les écouteurs d'événements
     return () => {
       socket.off("chatHistory");
       socket.off("newMessage");
+      socket.off("adminStatus");
     };
   }, []); // Tableau de dépendances vide = effet exécuté une seule fois au montage
 
   // Fonction pour envoyer un message
   const sendMessage = () => {
-    // Vérifie que le message n'est pas vide (après suppression des espaces)
-    if (input.trim()) {
+    if (messageInput.trim()) {
       // Émet l'événement 'sendMessage' vers le serveur avec les données du message
-      socket.emit("sendMessage", { user, message: input });
+      socket.emit("sendMessage", { user, message: messageInput });
       // Vide le champ de saisie après envoi
-      setInput("");
+      setMessageInput("");
     }
   };
 
@@ -49,13 +55,24 @@ export default function Chat() {
       <div>
         <h1>Entrez votre pseudo :</h1>
         <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+          value={userInput}
+          placeholder="Votre pseudo"
+          onChange={(e) => setUserInput(e.target.value)}
           onKeyDown={(e) => {
-            // Valide le pseudo quand l'utilisateur appuie sur Entrée
-            e.key === "Enter" && setUser(input);
+            if (e.key === "Enter") {
+              setUser(userInput);
+              setUserInput("");
+            }
           }}
         />
+        <button
+          onClick={() => {
+            setUser(userInput);
+            setUserInput("");
+          }}
+        >
+          Valider
+        </button>
       </div>
     );
   }
@@ -63,6 +80,9 @@ export default function Chat() {
   return (
     <div className="chat-container">
       <h2>Chat - Connecté en tant que {user}</h2>
+      {isAdmin && <p>Vous êtes connecté en tant qu'administrateur.</p>}
+
+      {/* Affichage de l'historique des messages */}
 
       <div>
         {messages.map((msg, index) => (
@@ -77,8 +97,8 @@ export default function Chat() {
       </div>
 
       <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
+        value={messageInput}
+        onChange={(e) => setMessageInput(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         placeholder="Votre message"
       />
