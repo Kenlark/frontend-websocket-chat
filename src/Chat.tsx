@@ -15,7 +15,7 @@ export default function Chat() {
   const [user, setUser] = useState<string>("");
   const [userInput, setUserInput] = useState<string>("");
   const [messageInput, setMessageInput] = useState<string>("");
-  const [isAdmin, setIsAdmin] = useState<boolean>(true);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   // Configuration des écouteurs d'événements socket
   useEffect(() => {
@@ -86,11 +86,26 @@ export default function Chat() {
 
       <div>
         {messages.map((msg, index) => (
-          <div key={msg._id || index}>
-            <strong>{msg.user}</strong>: {msg.message}
-            {/* Affichage de l'horodatage si disponible */}
+          <div key={msg._id || index} className="message">
+            <strong className="message-user">{msg.user}</strong>
+            <span className="message-content">: {msg.message}</span>
             {msg.timestamp && (
-              <span>({new Date(msg.timestamp).toLocaleTimeString()})</span>
+              <span className="timestamp">
+                ({new Date(msg.timestamp).getDate()}-
+                {new Date(msg.timestamp).getMonth() + 1}-
+                {new Date(msg.timestamp).getFullYear().toPrecision(4)})
+                <span className="timestamp-hours">
+                  {new Date(msg.timestamp)
+                    .getHours()
+                    .toString()
+                    .padStart(2, "0")}
+                  :
+                  {new Date(msg.timestamp)
+                    .getMinutes()
+                    .toString()
+                    .padStart(2, "0")}
+                </span>
+              </span>
             )}
           </div>
         ))}

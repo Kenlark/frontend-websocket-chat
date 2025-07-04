@@ -1,5 +1,9 @@
 import { io } from "socket.io-client";
 
-// Création de la connexion socket vers le serveur
-// Utilise le nom d'hôte actuel avec le port 3000
-export const socket = io(`${window.location.hostname}:3000`);
+const host = window.location.hostname;
+const socketUrl =
+  host === "localhost" || host === "127.0.0.1"
+    ? "http://localhost:3000"
+    : "https://backend-websocket-chat.fly.dev/";
+
+export const socket = io(socketUrl);

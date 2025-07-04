@@ -2,3 +2,13 @@
   display: grid;
   place-items: center;
 }
+
+.timestamp {
+  font-size: 0.8em;
+  color: #888;
+  margin-left: 1rem;
+}
+
+.timestamp-hours {
+  margin-left: 1rem;
+}
