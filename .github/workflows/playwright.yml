@@ -10,6 +10,8 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      VITE_SOCKET_URL: https://backend-websocket-chat.fly.dev/
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
