@@ -11,7 +11,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     env:
-      VITE_SOCKET_URL: https://backend-websocket-chat.fly.dev/
+      VITE_SOCKET_URL: https://backend-websocket-chat.onrender.com/
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
